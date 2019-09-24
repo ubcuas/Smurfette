@@ -17,6 +17,6 @@ FROM alpine:latest AS run
 RUN mkdir -p /uas/smurfette
 WORKDIR /uas/smurfette
 
-RUN apk add --no-cache libstdc++
+RUN apk add --no-cache libstdc++ libpq
 
 COPY --from=build /uas/smurfette/build/smurfette ./
