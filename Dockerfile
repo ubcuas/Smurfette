@@ -9,7 +9,7 @@ WORKDIR /uas/smurfette/build
 RUN apk add --no-cache build-base cmake libpq
 
 COPY src/ ./
-RUN cmake . && make
+RUN cmake . && make -j4
 
 
 ## Runtime image
