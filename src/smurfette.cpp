@@ -1,8 +1,8 @@
-#include <iostream>
 #include <chrono>
 #include <cstdint>
-#include <thread>
+#include <iostream>
 #include <mutex>
+#include <thread>
 #include "uastelem.h"
 #include "utils.h"
 
@@ -17,6 +17,8 @@ std::mutex groundTelemMutex;
 UasTelem groundSkylinkTelem;
 
 void telemetryGatherThread(std::mutex* mutexPtr, UasTelem* skylinkTelemPtr) {
+    utils::TickClock tickClock (TLEM_THREAD_WAIT_MS);
+
     while(true) {
         // Get telem from serial socket
 
@@ -24,7 +26,7 @@ void telemetryGatherThread(std::mutex* mutexPtr, UasTelem* skylinkTelemPtr) {
         skylinkTelemPtr->update(0.0, 0.0, 0.0);
         mutexPtr->unlock();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(TLEM_THREAD_WAIT_MS));
+        tickClock.synchronize();
     }
 }
 
@@ -35,6 +37,8 @@ bool isTelemTimestampValid(int64_t timestamp, int64_t telemTimestamp) {
 int main() {
     std::thread aircraftTelemThread (telemetryGatherThread, &aircraftTelemMutex, &aircraftSkylinkTelem);
     std::thread groundTelemThread (telemetryGatherThread, &groundTelemMutex, &groundSkylinkTelem);
+
+    utils::TickClock tickClock (MAIN_THREAD_WAIT_MS);
 
     while(true) {
         UasTelem uasTelem;
@@ -61,7 +65,7 @@ int main() {
             std::cout << "No valid TELEM found" << std::endl;
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(MAIN_THREAD_WAIT_MS));
+        tickClock.synchronize();
     }
 
     aircraftTelemThread.join();
