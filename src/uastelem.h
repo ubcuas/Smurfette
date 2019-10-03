@@ -13,7 +13,7 @@ public:
     double altitude();
     uint64_t timestamp();
 
-private:
+// private:
     double _latitude;
     double _longitude;
     double _altitude;

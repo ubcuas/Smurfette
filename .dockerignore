@@ -1,1 +1,3 @@
 .git
+src/thirdparty/nlohmann_json/benchmarks
+src/thirdparty/nlohmann_json/test
