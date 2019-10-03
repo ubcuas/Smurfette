@@ -3,6 +3,7 @@
 #include <iostream>
 #include <mutex>
 #include <thread>
+#include "database.h"
 #include "uastelem.h"
 #include "utils.h"
 
@@ -35,6 +36,9 @@ bool isTelemTimestampValid(int64_t timestamp, int64_t telemTimestamp) {
 }
 
 int main() {
+    std::cout << "Starting connection to database" << std::endl;
+    database::PGDatabase databaseConnection ("postgresql://172.17.0.2:5432");
+
     std::thread aircraftTelemThread (telemetryGatherThread, &aircraftTelemMutex, &aircraftSkylinkTelem);
     std::thread groundTelemThread (telemetryGatherThread, &groundTelemMutex, &groundSkylinkTelem);
 
@@ -60,7 +64,7 @@ int main() {
         aircraftTelemMutex.unlock();
 
         if (validTelem) {
-            // Place telem into database
+            databaseConnection.addTelemItem(uasTelem);
         } else {
             std::cout << "No valid TELEM found" << std::endl;
         }

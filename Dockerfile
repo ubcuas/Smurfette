@@ -6,7 +6,7 @@ FROM alpine:latest AS build
 RUN mkdir -p /uas/smurfette/build
 WORKDIR /uas/smurfette/build
 
-RUN apk add --no-cache build-base cmake libpq
+RUN apk add --no-cache build-base cmake libpq postgresql-dev
 
 COPY src/ ./
 RUN cmake . && make -j4
