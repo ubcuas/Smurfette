@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  db:
+    container_name: smurfette_db
+    hostname: smurfette_db
+    image: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      smurfettetestnet:
+        ipv4_address: 172.180.0.5
+
+  smurfette:
+    container_name: smurfette
+    hostname: smurfette
+    build:
+      context: ../
+    command: ["./smurfette"]
+    tty: true
+    networks:
+      smurfettetestnet:
+        ipv4_address: 172.180.0.4
+
+networks:
+  smurfettetestnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.180.0.0/16
