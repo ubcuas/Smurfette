@@ -18,18 +18,20 @@ PGDatabase::~PGDatabase() {
 }
 
 bool PGDatabase::addTelemItem(UasTelem uasTelem) {
-    constexpr size_t numParams = 3;
+    constexpr size_t numParams = 4;
 
     const char* paramValues [numParams] = {
         reinterpret_cast<char *>(&uasTelem._latitude),
         reinterpret_cast<char *>(&uasTelem._longitude),
         reinterpret_cast<char *>(&uasTelem._altitude),
+        reinterpret_cast<char *>(&uasTelem._heading),
     };
 
     const int paramLengths [numParams] = {
         sizeof(uasTelem._latitude),
         sizeof(uasTelem._longitude),
         sizeof(uasTelem._altitude),
+        sizeof(uasTelem._heading),
     };
 
     // Set all fields to binary
@@ -37,7 +39,10 @@ bool PGDatabase::addTelemItem(UasTelem uasTelem) {
     std::fill_n(paramFormats, numParams, 1);
 
     auto res = PQexecParams(this->_databaseConnection,
-                            "INSERT INTO table (latitude, longtitude, altitude) VALUES ($1::double precision, $2::double precision, $3::double precision)",
+                            "INSERT INTO interop_uastelemetry \
+                            (latitude, longitude, altitude_msl, uas_heading, uploaded, created_at) \
+                            VALUES \
+                            ($1::double precision, $2::double precision, $3::double precision, $4::double precision, false::bool, now())",
                             numParams,
                             NULL,
                             paramValues,

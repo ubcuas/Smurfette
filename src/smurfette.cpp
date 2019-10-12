@@ -7,7 +7,7 @@
 #include "uastelem.h"
 #include "utils.h"
 
-constexpr char DEFAULT_DB_CONNECTION_STRING[] = "postgresql://smurfette_db:5432";
+constexpr char DEFAULT_DB_CONNECTION_STRING[] = "postgresql://postgres:postgres@gcomv2_db:5432";
 constexpr int TLEM_THREAD_WAIT_MS = 1000;
 constexpr int MAIN_THREAD_WAIT_MS = 1000;
 constexpr int MAX_TIMESTAMP_DIFF_MS = 100;
@@ -27,7 +27,7 @@ void telemetryGatherThread(std::mutex* mutexPtr, UasTelem* skylinkTelemPtr) {
         // Get telem from serial socket
 
         mutexPtr->lock();
-        skylinkTelemPtr->update(0.0, 0.0, 0.0);
+        skylinkTelemPtr->update(0.0, 0.0, 0.0, 0.0);
         mutexPtr->unlock();
         std::cout << "Telem Thread Tick " << threadID << std::endl;
 
