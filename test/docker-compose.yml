@@ -8,10 +8,42 @@ services:
       context: ../
     command: ["./smurfette"]
     tty: true
+    depends_on:
+      - fakelink
+      - fakelink2
     networks:
       - gcomnet
+      - smurfettenet
+
+  fakelink:
+    container_name: fakelink
+    hostname: fakelink
+    build:
+      context: fakelink
+    command: ["python", "fakelink.py", "65433"]
+    tty: true
+    ports:
+      - "65433:65433"
+    networks:
+      - smurfettenet
+
+  fakelink2:
+    container_name: fakelink2
+    hostname: fakelink2
+    build:
+      context: fakelink
+    command: ["python", "fakelink.py", "65434"]
+    tty: true
+    ports:
+      - "65434:65434"
+    networks:
+      - smurfettenet
+
 
 networks:
   gcomnet:
     external:
       name: gcom-x_uasnet
+
+  smurfettenet:
+    driver: bridge

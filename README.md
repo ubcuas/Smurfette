@@ -26,3 +26,9 @@ See the full documentation on UAS confluence [here](http://confluence.ubcuas.com
 ```
 
 Note, you need to run bash and then the program first, since the docker container doesn't handle signal interrupts correctly.
+
+## Tidying
+Run this command fro mthe main directory to cleanup the C++ code.
+```shell
+clang-format -i src/*.[ch]*
+```

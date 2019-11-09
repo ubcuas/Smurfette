@@ -16,4 +16,4 @@ private:
     uint64_t _epochSyncMS;
 };
 
-}  // namespace utils
+} // namespace utils

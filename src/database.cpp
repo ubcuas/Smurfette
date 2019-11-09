@@ -1,10 +1,10 @@
+#include "database.h"
 #include <algorithm>
 #include <iostream>
-#include "database.h"
 
 namespace database {
 
-PGDatabase::PGDatabase(std::string connectionString) {
+PGDatabase::PGDatabase(const std::string connectionString) {
     this->_databaseConnection = PQconnectdb(connectionString.c_str());
     if (PQstatus(this->_databaseConnection) == CONNECTION_OK) {
         std::cout << "Database Connected!" << std::endl;
@@ -20,35 +20,24 @@ PGDatabase::~PGDatabase() {
 bool PGDatabase::addTelemItem(UasTelem uasTelem) {
     constexpr size_t numParams = 4;
 
-    const char* paramValues [numParams] = {
-        reinterpret_cast<char *>(&uasTelem._latitude),
-        reinterpret_cast<char *>(&uasTelem._longitude),
-        reinterpret_cast<char *>(&uasTelem._altitude),
-        reinterpret_cast<char *>(&uasTelem._heading),
+    const char* paramValues[numParams] = {
+        uasTelem._latitudeString.data(),
+        uasTelem._longitudeString.data(),
+        uasTelem._altitudeString.data(),
+        uasTelem._headingString.data(),
     };
-
-    const int paramLengths [numParams] = {
-        sizeof(uasTelem._latitude),
-        sizeof(uasTelem._longitude),
-        sizeof(uasTelem._altitude),
-        sizeof(uasTelem._heading),
-    };
-
-    // Set all fields to binary
-    int paramFormats [numParams];
-    std::fill_n(paramFormats, numParams, 1);
 
     auto res = PQexecParams(this->_databaseConnection,
-                            "INSERT INTO interop_uastelemetry \
-                            (latitude, longitude, altitude_msl, uas_heading, uploaded, created_at) \
-                            VALUES \
-                            ($1::double precision, $2::double precision, $3::double precision, $4::double precision, false::bool, now())",
-                            numParams,
-                            NULL,
-                            paramValues,
-                            paramLengths,
-                            paramFormats,
-                            1);
+        "INSERT INTO interop_uastelemetry \
+        (latitude, longitude, altitude_msl, uas_heading, uploaded, created_at) \
+        VALUES \
+        ($1::float8, $2::float8, $3::float8, $4::float8, false::bool, now())",
+        numParams,
+        NULL,
+        paramValues,
+        NULL,
+        NULL,
+        1);
 
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
         std::cerr << "Failed to add telem item to database: " << PQerrorMessage(this->_databaseConnection) << std::endl;
@@ -61,4 +50,4 @@ bool PGDatabase::addTelemItem(UasTelem uasTelem) {
     }
 }
 
-}  // namespace database
+} // namespace database

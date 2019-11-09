@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstdint>
+#include <iomanip>
+#include <string>
 
 class UasTelem {
 public:
@@ -14,12 +16,17 @@ public:
     double heading();
     uint64_t timestamp();
 
+    std::string _latitudeString;
+    std::string _longitudeString;
+    std::string _altitudeString;
+    std::string _headingString;
+
+private:
     double _latitude;
     double _longitude;
     double _altitude;
     double _heading;
     uint64_t _timestamp;
 
-private:
     void updateTimestamp();
 };
