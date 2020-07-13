@@ -1,22 +1,19 @@
-# UBC UAS Dockerfile - Smurfette
+FROM ubcuas/rustuuas:latest as build
 
-
-## Prebuild image
-FROM alpine:latest AS build
-RUN mkdir -p /uas/smurfette/build
-WORKDIR /uas/smurfette/build
-
-RUN apk add --no-cache build-base cmake libpq postgresql-dev boost-dev linux-headers
-
-COPY src/ ./
-RUN cmake . && make -j4
-
-
-## Runtime image
-FROM alpine:latest AS run
 RUN mkdir -p /uas/smurfette
 WORKDIR /uas/smurfette
 
-RUN apk add --no-cache libstdc++ libpq boost
+COPY Cargo.toml Cargo.lock ./
+COPY src/ ./src/
 
-COPY --from=build /uas/smurfette/build/smurfette ./
+RUN cargo build --release
+
+
+FROM ubcuas/rustuuas:latest as runner
+
+RUN mkdir -p /uas/smurfette
+WORKDIR /uas/smurfette
+
+COPY --from=build /uas/smurfette/target/release/smurfette /uas/smurfette/
+
+CMD ["/uas/smurfette/smurfette"]

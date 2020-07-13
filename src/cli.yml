@@ -1,0 +1,21 @@
+name: smurfette
+version: 0.1.0
+about: Telemtry to the people!
+
+settings:
+  - ArgRequiredElseHelp
+  - ColoredHelp
+
+args:
+    - gcomhostname:
+        value_name: GCOM_HOSTNAME
+        help: Hostname to access gcom, for example `www.gcom.ca` or `192.168.1.44`
+        required: true
+        index: 1
+
+    - skylinksource:
+        value_name: SKYLINK_SOURCE
+        help: TCP input string for a skylink source, for example `127.0.0.1:5555`
+        required: true
+        multiple: true
+        index: 2
