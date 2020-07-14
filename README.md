@@ -13,7 +13,6 @@ See the full documentation on UAS confluence [here](http://confluence.ubcuas.com
 - First, install `docker` and `docker-compose`
 
 ```shell
-    $ git submodule update --init --recursive
     $ sudo docker build . -t smurfette
 ```
 
