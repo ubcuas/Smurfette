@@ -57,12 +57,12 @@ ARGS:
 
 If you wanted to send telemetry from a `Skylink` instance serving on port 5555 to `GCOM-X` which is running on port 8080:
 ```
-docker run -it ubcuas/smurfette:latest 127.0.0.1:8080 127.0.0.1:5555
+docker run -it --init ubcuas/smurfette:latest 127.0.0.1:8080 127.0.0.1:5555
 ```
 
 If you wanted to aggregate telemetry from multiple `Skylink` instances serving on ports 5555, 6666 and 7777 to `GCOM-X` which is running on port 8080:
 ```
-docker run -it ubcuas/smurfette:latest 127.0.0.1:8080 127.0.0.1:5555 127.0.0.1:6666 127.0.0.1:7777
+docker run -it --init ubcuas/smurfette:latest 127.0.0.1:8080 127.0.0.1:5555 127.0.0.1:6666 127.0.0.1:7777
 ```
 
 ## Troubleshooting
