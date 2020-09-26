@@ -16,4 +16,4 @@ WORKDIR /uas/smurfette
 
 COPY --from=build /uas/smurfette/target/release/smurfette /uas/smurfette/
 
-CMD ["/uas/smurfette/smurfette"]
+ENTRYPOINT ["/uas/smurfette/smurfette"]
