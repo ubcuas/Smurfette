@@ -49,5 +49,5 @@ docker-multiarch-publish: docker-multiarch-deps
 
 ## CI ##
 ci-test:
-	docker build . --pull=true --target build -t ubcuas/smurfette:test
+	docker build . --pull=true --target builder -t ubcuas/smurfette:test
 	docker run ubcuas/smurfette:test cargo test --release
