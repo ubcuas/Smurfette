@@ -25,13 +25,29 @@ install:
 	cargo install
 
 ## Docker ##
+docker-multiarch-deps:
+	DOCKER_CLI_EXPERIMENTAL=enabled DOCKER_BUILDKIT=enabled docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+	DOCKER_CLI_EXPERIMENTAL=enabled DOCKER_BUILDKIT=enabled docker buildx create --name mubuilder | echo "ok"
+	DOCKER_CLI_EXPERIMENTAL=enabled DOCKER_BUILDKIT=enabled docker buildx use mubuilder
+	DOCKER_CLI_EXPERIMENTAL=enabled DOCKER_BUILDKIT=enabled docker buildx inspect --bootstrap
+
 docker:
-	docker build . -t ubcuas/smurfette:latest
+	docker build . --pull=true --tag ubcuas/smurfette:latest
 
 docker-publish: docker
 	docker push ubcuas/smurfette:latest
 
+docker-multiarch: docker-multiarch-deps
+	DOCKER_CLI_EXPERIMENTAL=enabled \
+	DOCKER_BUILDKIT=enabled \
+	docker buildx build . --pull=true -t ubcuas/smurfette:latest --platform "linux/amd64,linux/arm64"
+
+docker-multiarch-publish: docker-multiarch-deps
+	DOCKER_CLI_EXPERIMENTAL=enabled \
+	DOCKER_BUILDKIT=enabled \
+	docker buildx build . --pull=true -t ubcuas/smurfette:latest --push --platform "linux/amd64,linux/arm64"
+
 ## CI ##
 ci-test:
-	docker build . --target build -t ubcuas/smurfette:test
+	docker build . --pull=true --target build -t ubcuas/smurfette:test
 	docker run ubcuas/smurfette:test cargo test --release

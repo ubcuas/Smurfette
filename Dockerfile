@@ -1,4 +1,4 @@
-FROM ubcuas/rustuuas:latest as build
+FROM ubcuas/rustuuas:latest AS builder
 
 RUN mkdir -p /uas/smurfette
 WORKDIR /uas/smurfette
@@ -9,11 +9,13 @@ COPY src/ ./src/
 RUN cargo build --release
 
 
-FROM ubcuas/rustuuas:latest as runner
+FROM ubcuas/cppuuas:latest AS runner
 
 RUN mkdir -p /uas/smurfette
 WORKDIR /uas/smurfette
 
-COPY --from=build /uas/smurfette/target/release/smurfette /uas/smurfette/
+RUN apt-get update -y && apt-get install -y openssl
+
+COPY --from=builder /uas/smurfette/target/release/smurfette /uas/smurfette/
 
 ENTRYPOINT ["/uas/smurfette/smurfette"]
